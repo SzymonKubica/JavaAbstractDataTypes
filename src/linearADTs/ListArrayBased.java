@@ -2,11 +2,12 @@ package linearADTs;
 
 public class ListArrayBased<T> implements ListInterface<T>{
   public static final int  DEFAULT_INITIAL_SIZE = 100;
+  private int MAX_SIZE = DEFAULT_INITIAL_SIZE;
   private int size;
   private T[] elements;
 
   public ListArrayBased() {
-    elements = (T[]) new Object[DEFAULT_INITIAL_SIZE];
+    elements = (T[]) new Object[MAX_SIZE];
     size = 0;
   }
   @Override
@@ -33,11 +34,23 @@ public class ListArrayBased<T> implements ListInterface<T>{
   @Override
   public void add(int index, T element) {
     assert 0 <= index && index <= size : "The index must be within bounds";
-    if (elements[index] != null) {
-      translateRightStartingFrom(index);
+    if (size() < MAX_SIZE) {
+      if (elements[index] != null) {
+        translateRightStartingFrom(index);
+      }
+      elements[index] = element;
+      size++;
+    } else {
+      resize();
+      add(index, element);
     }
-    elements[index] = element;
-    size++;
+  }
+
+  private void resize() {
+    MAX_SIZE *= 1.5;
+    T[] newElements = (T[]) new Object[MAX_SIZE];
+    System.arraycopy(elements, 0, newElements, 0, elements.length);
+    elements = newElements;
   }
 
   private void translateRightStartingFrom(int index) {
