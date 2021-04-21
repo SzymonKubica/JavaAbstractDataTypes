@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+// TODO: Make it work!!.
 public class ListFineGrained<T> implements ListInterface<T> {
   private LockableNode<T> head;
   private AtomicInteger size;
@@ -74,7 +75,7 @@ public class ListFineGrained<T> implements ListInterface<T> {
   }
 
   private void appendTo(LockableNode<T> tail, T element) {
-    assert !tail.hasNext();
+    assert !tail.hasNext() && tail.isLocked();
     tail.next = new LockableNode<>(element, null);
     tail.unlock();
   }
@@ -97,11 +98,18 @@ public class ListFineGrained<T> implements ListInterface<T> {
   private T removeHead() {
     head.lock();
     LockableNode<T> next = head.next;
-    next.lock();
-    T result = head.element;
-    head.unlock();
-    head = next;
-    next.unlock();
+    T result;
+    if (next != null) {
+      next.lock();
+      result = head.element;
+      head.unlock();
+      head = next;
+      next.unlock();
+    } else {
+      result = head.element;
+      head.unlock();
+      head = null;
+    }
     size.decrementAndGet();
     return result;
   }
@@ -123,7 +131,6 @@ public class ListFineGrained<T> implements ListInterface<T> {
     if (predecessor.next != null) {
       LockableNode<T> current = predecessor.next;
       current.lock();
-
       for (int i = 0; i < index - 1; i++) {
         LockableNode<T> successor = current.next;
         if (successor != null) {
@@ -134,6 +141,7 @@ public class ListFineGrained<T> implements ListInterface<T> {
         } else {
           predecessor.unlock();
           predecessor = current;
+          break;
         }
       }
     }
@@ -144,22 +152,30 @@ public class ListFineGrained<T> implements ListInterface<T> {
     private final E element;
     private LockableNode<E> next;
     private Lock lock = new ReentrantLock();
+    private boolean locked;
 
     LockableNode(E element, LockableNode<E> next) {
       this.element = element;
       this.next = next;
+      locked = false;
     }
 
     public boolean hasNext() {
       return next != null;
     }
 
+    public boolean isLocked() {
+      return locked;
+    }
+
     public void lock() {
       lock.lock();
+      locked = true;
     }
 
     public void unlock() {
       lock.unlock();
+      locked = false;
     }
   }
 }

@@ -53,8 +53,56 @@ public class ListFineGrainedTest {
     Assertions.assertEquals((int) list.get(4), 5);
   }
 
+  @Test
+  void concurrentModificationsTest() {
+    ListFineGrained<Integer> list = getSampleList();
+    //ListLinkedNodeBased<Integer> list = getSampleNodeBasedList();
+
+    ItemDeleter deleter1 = new ItemDeleter(list);
+    ItemDeleter deleter2 = new ItemDeleter(list);
+    ItemAdder adder1 = new ItemAdder(list);
+    ItemAdder adder2 = new ItemAdder(list);
+    ItemAdder adder3 = new ItemAdder(list);
+    ItemAdder adder4 = new ItemAdder(list);
+
+    Thread deleter1Thread = new Thread(deleter1);
+    Thread deleter2Thread = new Thread(deleter2);
+    Thread adderThread1 = new Thread(adder1);
+    Thread adderThread2 = new Thread(adder2);
+    Thread adderThread3 = new Thread(adder3);
+    Thread adderThread4 = new Thread(adder4);
+
+    deleter1Thread.start();
+    deleter2Thread.start();
+    adderThread1.start();
+    adderThread2.start();
+    adderThread3.start();
+    adderThread4.start();
+
+    try {
+      deleter1Thread.join();
+      deleter2Thread.join();
+      adderThread4.join();
+      adderThread4.join();
+      adderThread4.join();
+      adderThread4.join();
+    } catch (InterruptedException e) {
+      System.out.println(e.getMessage());
+    }
+
+    Assertions.assertEquals(4000, list.size());
+  }
+
   private static ListFineGrained<Integer> getSampleList() {
     ListFineGrained<Integer> list = new ListFineGrained<>();
+    for (int i = 0; i < 10; i++) {
+      list.add(i, i);
+    }
+    return list;
+  }
+
+  private static ListLinkedNodeBased<Integer> getSampleNodeBasedList() {
+    ListLinkedNodeBased<Integer> list = new ListLinkedNodeBased<>();
     for (int i = 0; i < 10; i++) {
       list.add(i, i);
     }
@@ -67,5 +115,36 @@ public class ListFineGrainedTest {
       list.add(i, i);
     }
     return list;
+  }
+
+  private class ItemDeleter<T> implements Runnable {
+    private ListInterface<T> source;
+    int initialSourceSize;
+
+    public ItemDeleter(ListInterface<T> source) {
+      this.source = source;
+      initialSourceSize = source.size();
+    }
+    @Override
+    public void run(){
+      for (int i = 0; i < initialSourceSize / 2; i++) {
+        source.remove(0);
+      }
+    }
+  }
+
+  private class ItemAdder implements Runnable {
+    private ListInterface<Integer> destination;
+
+    public ItemAdder(ListInterface<Integer> destination) {
+      this.destination = destination;
+    }
+
+    @Override
+    public void run() {
+      for (int i = 0; i < 1000; i++) {
+        destination.add(destination.size(), i);
+      }
+    }
   }
 }
