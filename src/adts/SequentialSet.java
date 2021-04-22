@@ -1,12 +1,12 @@
-package linearADTs;
+package adts;
 
-public class CoarseGrainedLinkedSet<T> implements SetInterface<T> {
+public class SequentialSet<T> implements SetInterface<T> {
 
   protected SimpleNode<T> head;
   protected SimpleNode<T> tail;
   private int size;
 
-  public CoarseGrainedLinkedSet() {
+  public SequentialSet() {
     head = new SimpleNode<>(Integer.MIN_VALUE,null);
     tail = new SimpleNode<>(Integer.MAX_VALUE,null);
     head.setNext(tail);
@@ -14,7 +14,7 @@ public class CoarseGrainedLinkedSet<T> implements SetInterface<T> {
   }
 
   @Override
-  public synchronized boolean add(T item) {
+  public boolean add(T item) {
     SimpleNode<T> newNode = new SimpleNode<>(item.hashCode(), item);
     SimpleNode<T> position = findPosition(newNode.key());
     if(position.next().key() == newNode.key()) {
@@ -40,7 +40,7 @@ public class CoarseGrainedLinkedSet<T> implements SetInterface<T> {
   }
 
   @Override
-  public synchronized boolean remove(T item) {
+  public boolean remove(T item) {
     SimpleNode<T> position = findPosition(item.hashCode());
     if (position.next().item().equals(item)) {
       position.setNext(position.next().next());
@@ -52,7 +52,7 @@ public class CoarseGrainedLinkedSet<T> implements SetInterface<T> {
   }
 
   @Override
-  public synchronized boolean contains(T item) {
+  public boolean contains(T item) {
     SimpleNode<T> position = findPosition(item.hashCode());
     if (position.next().equals(tail)) {
       return false;
@@ -61,7 +61,7 @@ public class CoarseGrainedLinkedSet<T> implements SetInterface<T> {
     }
   }
 
-  public synchronized int size() {
+  public int size() {
     return size;
   }
 }

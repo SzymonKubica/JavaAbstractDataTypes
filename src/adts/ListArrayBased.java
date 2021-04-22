@@ -1,4 +1,4 @@
-package linearADTs;
+package adts;
 
 public class ListArrayBased<T> implements ListInterface<T>{
   public static final int  DEFAULT_INITIAL_SIZE = 100;

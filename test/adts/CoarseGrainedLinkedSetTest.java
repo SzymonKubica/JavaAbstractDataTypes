@@ -1,12 +1,14 @@
-package linearADTs;
+package adts;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SequentialSetTest {
+public class CoarseGrainedLinkedSetTest {
+
+  // The following tests exercise the regular sequential functionality of the CoarseGrainedLinkedSet.
   @Test
   void addAndContainsTest() {
-    SequentialSet<Integer> integers = getSampleIntegerSet();
+    CoarseGrainedLinkedSet<Integer> integers = getSampleIntegerSet();
     for (int i = 0; i < 5; i++) {
       Assertions.assertTrue(integers.contains(i));
     }
@@ -14,7 +16,7 @@ public class SequentialSetTest {
 
   @Test
   void removeTest() {
-    SequentialSet<Integer> integers = getSampleIntegerSet();
+    CoarseGrainedLinkedSet<Integer> integers = getSampleIntegerSet();
     Assertions.assertTrue(integers.contains(4));
     integers.remove(4);
     Assertions.assertFalse(integers.contains(4));
@@ -26,8 +28,8 @@ public class SequentialSetTest {
     Assertions.assertEquals(5, integers.size());
   }
 
-  private SequentialSet<Integer> getSampleIntegerSet() {
-    SequentialSet<Integer> integers = new SequentialSet<>();
+  private CoarseGrainedLinkedSet<Integer> getSampleIntegerSet() {
+    CoarseGrainedLinkedSet<Integer> integers = new CoarseGrainedLinkedSet<>();
     for (int i = 0; i < 5; i++) {
       integers.add(i);
     }

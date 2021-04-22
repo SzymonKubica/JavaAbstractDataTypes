@@ -1,4 +1,4 @@
-package linearADTs;
+package adts;
 
 public interface ListInterface<T> {
 

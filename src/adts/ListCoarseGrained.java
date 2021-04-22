@@ -1,32 +1,32 @@
-package linearADTs;
+package adts;
 
-public class ListLinkedNodeBased<T> implements ListInterface<T> {
+public class ListCoarseGrained<T> implements ListInterface<T> {
   private Node<T> head;
   private int size;
 
-  public ListLinkedNodeBased() {
+  public ListCoarseGrained() {
     head = null;
     size = 0;
   }
 
   @Override
-  public boolean isEmpty() {
+  public synchronized boolean isEmpty() {
     return size() == 0;
   }
 
   @Override
-  public int size() {
+  public synchronized int size() {
     return size;
   }
 
   @Override
-  public T get(int index) {
+  public synchronized T get(int index) {
     assert 0 <= index && index < size : "The index must be within bounds";
     return findPosition(index + 1).element;
   }
 
   @Override
-  public void add(int index, T element) {
+  public synchronized void add(int index, T element) {
     assert 0 <= index && index <= size : "The index must be within bounds";
     if (isEmpty()) {
       initializeList(element);
@@ -66,12 +66,12 @@ public class ListLinkedNodeBased<T> implements ListInterface<T> {
   }
 
   @Override
-  public void add(T element) {
+  public synchronized void add(T element) {
     add(0, element);
   }
 
   @Override
-  public T remove(int index) {
+  public synchronized T remove(int index) {
     assert 0 <= index && index < size : "The index must be within bounds";
     if (index == 0) {
       return removeHead();

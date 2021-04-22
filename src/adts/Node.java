@@ -1,4 +1,4 @@
-package linearADTs;
+package adts;
 
 public interface Node<T> {
   T item();

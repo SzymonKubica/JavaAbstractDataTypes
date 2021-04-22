@@ -1,4 +1,4 @@
-package linearADTs;
+package adts;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -58,8 +58,8 @@ public class ListFineGrainedTest {
     ListFineGrained<Integer> list = getSampleList();
     //ListLinkedNodeBased<Integer> list = getSampleNodeBasedList();
 
-    ItemDeleter deleter1 = new ItemDeleter(list);
-    ItemDeleter deleter2 = new ItemDeleter(list);
+    ItemDeleter<Integer> deleter1 = new ItemDeleter<>(list);
+    ItemDeleter<Integer> deleter2 = new ItemDeleter<>(list);
     ItemAdder adder1 = new ItemAdder(list);
     ItemAdder adder2 = new ItemAdder(list);
     ItemAdder adder3 = new ItemAdder(list);
@@ -125,8 +125,9 @@ public class ListFineGrainedTest {
       this.source = source;
       initialSourceSize = source.size();
     }
+
     @Override
-    public void run(){
+    public void run() {
       for (int i = 0; i < initialSourceSize / 2; i++) {
         source.remove(0);
       }

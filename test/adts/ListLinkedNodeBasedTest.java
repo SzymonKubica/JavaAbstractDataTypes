@@ -1,4 +1,4 @@
-package linearADTs;
+package adts;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

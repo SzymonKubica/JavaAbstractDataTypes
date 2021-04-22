@@ -1,4 +1,4 @@
-package linearADTs;
+package adts;
 
 public class SimpleNode<T> implements Node<T> {
   private final int key;
